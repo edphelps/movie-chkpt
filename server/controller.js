@@ -14,7 +14,9 @@ app.use(morgan('dev'));
 app.use(bodyParser.json());
 
 // setup static html folder
-// app.use(express.static('public'));
+// this should automagically pull up ./public/index.html
+// when user hits the root of the site:  http://www.my-site.com/
+app.use(express.static('public'));
 
 // routes
 app.use('/movies', view);
