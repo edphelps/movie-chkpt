@@ -1,7 +1,7 @@
 const express = require('express');
 
 const router = express.Router();
-const model = require('./model.js');
+const model = require('../model.js');
 
 const { chkBodyParams } = require('./params'); // destructure the chkBodyParams out of require('./params') returned object
 
