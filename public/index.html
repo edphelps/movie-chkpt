@@ -1,34 +1,126 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  <!-- App CSS -->
+  <link rel="stylesheet" href="./styles.css">
+  <title>My movie ratings</title>
+</head>
 
-    <title>My Movie Ratings</title>
-  </head>
-  <body>
+<body>
 
-    <!-- PAGE TITLE AND CREATE-POST BUTTON -->
-    <div class="jumbotron jumbotron-fluid bg-info text-light">
-      <div class="container">
-        <h1 class="display-3">My Movie Database</h1>
-        <button class="btn btn-secondary" id='create-post'>Create a New Post</button>
+  <div class="container-fluid">
+
+    <!-- ============================================= -->
+    <!-- BANNER -->
+    <!-- ============================================= -->
+    <div id="banner" class="bg-primary">
+      <!-- ROW -->
+      <div class="row p-3 d-flex align-items-end">
+        <!-- COLUMN title -->
+        <div class="col">
+          <h2 id="app-title" class="mb-3 font-weight-bold text-center text-light">My movie ratings</h3>
+        </div> <!-- col -->
+      </div> <!-- row -->
+    </div> <!-- banner -->
+
+
+    <!-- ============================================= -->
+    <!-- NAVIGATION -->
+    <!-- ============================================= -->
+
+    <nav class="navbar navbar-expand-sm navbar-dark bg-primary">
+      <!-- hamburger menu setup magic -->
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+          <a id="nav--home" class="nav-item nav-link " href="#">Home </a>
+          <a id="nav--list-movies" class="nav-item nav-link" href="#">List movies </a>
+        </div>
+      </div>
+    </nav>
+
+
+    <!-- ============================================= -->
+    <!-- CONTENT - Home -->
+    <!-- ============================================= -->
+    <div id="content--home" class="content" >
+
+      <p>&nbsp;</p>
+      <h2 class="text-center ml-3">Use the "List movies" menu choice to display your movies and ratings</h2>
+      <p>&nbsp;</p>
+      <p class="text-center ml-3">Poster images can be found<br><a  target="_blank" href="https://www.empireonline.com/movies/features/best-posters/">here</a>  </p>
+
+    </div>
+
+    <!-- ============================================= -->
+    <!-- CONTENT - List movies -->
+    <!-- ============================================= -->
+    <div id="content--list-movies" class="content" hidden>
+      <div id="list-of-movies">
+        <p>List movies page content loads here</p>
+      </div>
+    </div>
+
+    <!-- ============================================= -->
+    <!-- SUB CONTENT - List movies - Edit a movie -->
+    <!-- ============================================= -->
+    <div id="content--list-movies--edit" class="content" hidden>
+      <div id="edit-movie">
+        <form class="mt-3 ml-3" action="index.html" method="post">
+          <table>
+            <tbody>
+              <tr>
+                <th>Title</th>
+                <td><input type="text" name="title" required autofocus></td>
+              </tr>
+              <tr>
+                <th>Director</th>
+                <td><input type="text" name="director" required></td>
+              </tr>
+              <tr>
+                <th>Year</th>
+                <td><input type="number" name="year" min="1900" max="2018" required></td>
+              </tr>
+              <tr>
+                <th>Rating</th>
+                <td><input type="number" name="rating" min="1" max="5" required></td>
+              </tr>
+              <tr>
+                <th>Poster URL</th>
+                <td><input type="text" name="poster" required></td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="text-center"><input class="btn btn-primary" type="submit" value="Save"></p>
+        </form>
       </div>
     </div>
 
 
-    <!-- Boostrap files -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  </div> <!-- container that holds all sections -->
 
-    <!-- Axios CDN -->
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
-    <!-- My script -->
-    <script src="./app.js" charset="utf-8"></script>
+  <!-- ============================================= -->
+  <!-- SCRIPT FILE LOADS -->
+  <!-- ============================================= -->
 
-  </body>
+  <!-- bootstrap -->
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
+
+  <!-- Axios CDN -->
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+  <!-- My script -->
+  <script src="./list-movies.js" charset="utf-8"></script>
+  <script src="./app.js" charset="utf-8"></script>
+</body>
+
 </html>
