@@ -1,3 +1,11 @@
+// =========================================================
+function onSubmitMovie() {
+  console.log("onSubmitMovie");
+
+  // deternine if we are editing existing movie or creating a new one
+
+  return false; // prevent the form from acutally submitting
+}
 
 // =========================================================
 // delete a movie
@@ -22,9 +30,20 @@ function onclickEdit(movieId) {
   console.log("** EDIT: ", movieId);
   axios.get(URL + movieId)
     .then((res) => {
-      const oMovie = res.body;
+      const oMovie = res.data;
+
+      // show the div with the movie editing form
       const elemMovieForm = document.getElementById("content--list-movies--edit");
       changeContentArea(elemMovieForm);
+
+      // fill in the forms and image from the db record
+      document.getElementById("movie-form").title.value = oMovie.title;
+      document.getElementById("movie-form").director.value = oMovie.director;
+      document.getElementById("movie-form").year.value = oMovie.year;
+      document.getElementById("movie-form").rating.value = oMovie.rating;
+      document.getElementById("movie-form").poster.value = oMovie.poster;
+      document.getElementById("poster-image").src = oMovie.poster;
+
     })
     .catch((error) => {
       console.log("---------- AJAX error ----------");
@@ -38,8 +57,11 @@ function onclickEdit(movieId) {
 // add a new movie
 function onclickNewMovie() {
   console.log("** NEW");
-  conset elemMovieForm = document.getElementById("content--list-movies--edit");
+
+  // show the div with the movie editing form
+  const elemMovieForm = document.getElementById("content--list-movies--edit");
   changeContentArea(elemMovieForm);
+
   return false;
 }
 
@@ -86,7 +108,7 @@ function displayMovieList() {
       let htmlMovieList = "";
 
       // display the New Movie button
-      htmlMovieList += "<p class='ml-3'><button class='btn btn-primary' onclick='onclickNewMovie()'>New Movie</button></p>"
+      htmlMovieList += "<p class='ml-3'><button class='btn btn-primary' onclick='onclickNewMovie()'>New Movie</button></p>";
 
       // display movies
       // console.log('aMovies: ', templateMovieList(aMovies));
