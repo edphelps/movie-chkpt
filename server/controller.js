@@ -32,7 +32,7 @@ app.use((req, res, next) => {
 
 /* **************************************************
 *  restructureError()
-*  @param Error -- actual Error object
+*  @param Error -- actual Error object with optional 'status'
 *  Returns object { status: 123, message: 'xxxx', stack: 'xxx' }
 ***************************************************** */
 function restructureError(error) {
@@ -40,7 +40,7 @@ function restructureError(error) {
   if (!error.stack)
     return error;
 
-  // look for ' at ' seperating error message from call stack
+  // look for ' at ' text seperating error message from call stack
   const i = error.stack.search(' at ');
   if (i === -1)
     return { message: error.message, stack: 'undetermined', status: error.status };
@@ -62,9 +62,9 @@ function restructureError(error) {
 // ===========================================================
 app.use((err, req, res, next) => {
   const status = err.status || 500;
-  console.log("======================= APP ERROR =======================");
+  console.log("======================= APP ERROR IN CONTROLLER =======================");
   console.log(err);
-  console.log("^^^^^^^^^^^^^^^^^^^^^^^ APP ERROR ^^^^^^^^^^^^^^^^^^^^^^");
+  console.log("^^^^^^^^^^^^^^^^^^^^^^^ APP ERROR IN CONTROLLER ^^^^^^^^^^^^^^^^^^^^^^");
   res.status(status).json(restructureError(err));
   next();
 });

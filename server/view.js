@@ -86,10 +86,14 @@ router.get('/:id', (req, res, next) => {
 *  @body year (int)
 *  @body rating (int)
 *  @body poster (url to a poster)
-*  Return, the updated movie record
+*  Return
+*     - update movie record: { id:2, title: "title", ...}
+*     - { error: { message: "movie title already exists" } }
+*     - { error: { message: "movie title already exists" } }
 http PUT localhost:3000/movies/2  title='My title' director='director' year=2000 rating=5 poster='http://blah-blah'
 ***************************************************** */
 router.put('/:id', (req, res, next) => {
+
   const oParams = {
     title: 'string',
     director: 'string',
@@ -97,7 +101,7 @@ router.put('/:id', (req, res, next) => {
     rating: 'int',
     poster: 'string',
   };
-  if (!chkBodyParams(oParams, req, res, next))
+  if (!chkBodyParams(oParams, req, res, next)) // will setup the error if param is missing
     return;
   const oMovie = {
     id: req.params.id,
@@ -107,15 +111,90 @@ router.put('/:id', (req, res, next) => {
     rating: req.body.rating,
     poster: req.body.poster,
   };
-  model.update(oMovie)
-    .then((updatedMovie) => {
-      res.status(201).json(updatedMovie);
+
+  // check if title already exists
+  console.log("--- view::put -- checking is title exists");
+  model.readTitle(oMovie.title)
+    .then((aRecs) => {
+      // if title exists for a differnt movie.id, setup error.message
+      if (aRecs.length && aRecs[0].id != oMovie.id) {
+        console.log("--- view::put -- movie exists");
+        res.status(201).json({ error: { message: "movie title already exists" }});
+      } else {
+        console.log("--- view::put -- movie ok to update, aRecs", aRecs);
+        // update the movie
+        model.update(oMovie)
+          .then((aRecs) => {
+            console.log("--- view::put -- updated, aRecs", aRecs);
+            // movie successfully updated
+            if (aRecs.length) {
+              console.log("--- view::put -- success");
+              res.status(201).json(aRecs[0]);
+            // movie not found so it couldn't be updated
+            } else {
+              console.log("--- view::put -- movie not fnd");
+              res.status(201).json({ error: { message: "movie not found" }});
+            }
+        })
+      }
     })
     .catch((error) => {
+      console.log("--- view::put -- caught error: ", error);
       error.status = 400;
       next(error);
     });
+
+  // model.update(oMovie)
+  //   .then((updatedMovie) => {
+  //     res.status(201).json(updatedMovie);
+  //   })
+  //   .catch((error) => {
+  //     error.status = 400;
+  //     next(error);
+  //   });
 });
+
+// router.put('/:id', (req, res, next) => {
+//   const oParams = {
+//     title: 'string',
+//     director: 'string',
+//     year: 'int',
+//     rating: 'int',
+//     poster: 'string',
+//   };
+//   if (!chkBodyParams(oParams, req, res, next))
+//     return;
+//   const oMovie = {
+//     id: req.params.id,
+//     title: req.body.title,
+//     director: req.body.director,
+//     year: req.body.year,
+//     rating: req.body.rating,
+//     poster: req.body.poster,
+//   };
+//   model.update(oMovie)
+//     .then((aRecs) => {
+//       if (aRecs.length) {
+//         res.status(201).json(aRecs[0]);
+//       } else {
+//         res.status(404).json({ error: { message: "movie title already exists" }});
+//       }
+//     })
+//     .catch((error) => {
+//       error.status = 400;
+//       next(error);
+//     });
+//
+//
+//   // model.update(oMovie)
+//   //   .then((updatedMovie) => {
+//   //     res.status(201).json(updatedMovie);
+//   //   })
+//   //   .catch((error) => {
+//   //     error.status = 400;
+//   //     next(error);
+//   //   });
+// });
 
 /* **************************************************
 *  DELETE /movies/:id

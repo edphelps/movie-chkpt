@@ -59,6 +59,16 @@ function read(_id) {
     .then(aRecs => aRecs[0]); // unpack single record
 }
 
+function readTitle(sTitle) {
+  /* find by title, returns array or 0 or 1 record */
+  return knex('movies')
+    .where('title', sTitle)
+    .then((res) => {
+      console.log("--> model::readTitle returning: ", res);
+      return res;
+    })
+}
+
 function readAll() {
   /*
     read all records
@@ -71,29 +81,29 @@ function update(movie) {
     Update an existing movie.  See create for the format of the record.
     Must include the ID field in the record being passed.
   */
-  return knex('movies')
-    .where('title', movie.title)
-    .whereNot('id', movie.id)
-    .then((aRecs) => {
-      if (aRecs.length)
-        throw { error: { message: "movie title already exists" }};
-    })
-    .then(() => {
-      return knex('movies')
-      .update(movie)
-      .where('id', movie.id)
-      .returning('*') // gets array of the inserted records
-    })
-    .then(aRecs => aRecs[0]) // unpack single record
-    .catch((err) => {
-      // if this is the error of a movie title exisitng, return it as an object
-      //   since this is an expected error, not catastrophic like a db connection problem
-      if (err.error.message) {
-        return err;
-      }
-      // otherwise rethrow the critical error so caller can handle it
-      throw err;
-    })
+  // return knex('movies')
+  //   .where('title', movie.title)
+  //   .whereNot('id', movie.id)
+  //   .then((aRecs) => {
+  //     if (aRecs.length)
+  //       throw { error: { message: "movie title already exists" }};
+  //   })
+  //   .then(() => {
+  //     return knex('movies')
+  //     .update(movie)
+  //     .where('id', movie.id)
+  //     .returning('*') // gets array of the inserted records
+  //   })
+  //   .then(aRecs => aRecs[0]) // unpack single record
+  //   .catch((err) => {
+  //     // if this is the error of a movie title exisitng, return it as an object
+  //     //   since this is an expected error, not catastrophic like a db connection problem
+  //     if (err.error.message) {
+  //       return err;
+  //     }
+  //     // otherwise rethrow the critical error so caller can handle it
+  //     throw err;
+  //   })
 
   // THIS IS THE SIMPLE VERSION THAT DOESN'T CHECK IF TITLE ALREADY EXISTS
   // return knex('movies')
@@ -101,6 +111,15 @@ function update(movie) {
   //   .where('id', movie.id)
   //   .returning('*')
   //   .then(aRecs => aRecs[0]); // unpack single record
+
+  return knex('movies')
+    .update(movie)
+    .where('id', movie.id)
+    .returning('*')
+    .then((res) => {
+      console.log("--> model::update returning: ", res);
+      return res;
+    })
 }
 
 function destroy(id) {
@@ -183,9 +202,20 @@ function destroy(id) {
 module.exports = {
   create,
   read,
+  readTitle,
   readAll,
   update,
   destroy,
 };
 
 // TESTING
+
+// readTitle("Fear and Loathing")
+//   .then((res) => {
+//     console.log("F&L: ", res);
+//   })
+//
+// readTitle("bad title")
+//   .then((res) => {
+//     console.log("bad title: ", res);
+//   })

@@ -70,10 +70,12 @@ function onSubmitMovie() {
       // UPDATE AN EXISTING MOVIE RECORD ------
       case 'edit':
         oMovie = getMovieFromForm();
-        console.log("*** post val: ", oMovie);
+        console.log('------------------------------');
+        console.log("=== onsubmitMovie, oMovie: ", oMovie);
         // axios.put(URL+document.getElementById("movie-form").id.value, oMovie)
         axios.put(URL+oMovie.id, oMovie)
           .then((res) => {
+            console.log("=== onsubmitMovie res: ", res);
             if (res.data.error) {
               displayErrorMessage(res.data.error.message);
               // stay in this view
@@ -84,9 +86,9 @@ function onSubmitMovie() {
             }
           })
           .catch((error) => {
-            console.log("---------- AJAX error ----------");
+            console.log("---------- AJAX error on edit ----------");
             console.log(error);
-            console.log("^^^^^^^^^^ AJAX error ^^^^^^^^^^");
+            console.log("^^^^^^^^^^ AJAX error on edit ^^^^^^^^^^");
           });
         break;
 
