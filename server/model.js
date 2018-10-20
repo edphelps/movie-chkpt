@@ -11,42 +11,51 @@ function create(movie) {
       rating: int,
       poster: url
     }
-    Return - the newly created record as an object or
-           - { error: { message: "movie already exists" } }
+    Returns an array with movie object or empty array (not sure when it would be empty)
+      -- [ { one-movie } ]
+      -- []
   */
   console.log("---- create()");
-  return knex('movies')
-    .where('title', movie.title)
-    .then((aRecs) => {
-      console.log("---- create aRecs: ", aRecs);
-      if (aRecs.length)
-        throw { error: { message: "movie title already exists" }};
-    })
-    .then(() => {
-      console.log("---- ready to insert: ", movie);
-      return knex('movies')
-       .insert([movie]) // param is in the format of the fields so use destructuring
-       .returning('*') // gets array of the inserted records
-    })
-    .then(aRecs => aRecs[0]) // unpack single record
-    .catch((err) => {
-      console.log("---- error: ", err);
-      // if this is the error of a movie title exisitng, return it as an object
-      //   since this is an expected error, not catastrophic like a db connection problem
-      if (err.error.message) {
-        console.log("---- return the error ");
-        return err;
-      }
-      console.log("---- throw the error");
-      // otherwise rethrow the critical error so caller can handle it
-      throw err;
-    })
+  // return knex('movies')
+  //   .where('title', movie.title)
+  //   .then((aRecs) => {
+  //     console.log("---- create aRecs: ", aRecs);
+  //     if (aRecs.length)
+  //       throw { error: { message: "movie title already exists" }};
+  //   })
+  //   .then(() => {
+  //     console.log("---- ready to insert: ", movie);
+  //     return knex('movies')
+  //      .insert([movie]) // param is in the format of the fields so use destructuring
+  //      .returning('*') // gets array of the inserted records
+  //   })
+  //   .then(aRecs => aRecs[0]) // unpack single record
+  //   .catch((err) => {
+  //     console.log("---- error: ", err);
+  //     // if this is the error of a movie title exisitng, return it as an object
+  //     //   since this is an expected error, not catastrophic like a db connection problem
+  //     if (err.error.message) {
+  //       console.log("---- return the error ");
+  //       return err;
+  //     }
+  //     console.log("---- throw the error");
+  //     // otherwise rethrow the critical error so caller can handle it
+  //     throw err;
+  //   })
 
   // THIS IS THE SIMPLE VERSION THAT DOESN'T CHECK IF TITLE ALREADY EXISTS
   // return knex('movies')
   //   .insert([movie]) // param is in the format of the fields so use destructuring
   //   .returning('*') // gets array of the inserted records
   //   .then(aRecs => aRecs[0]); // unpack single record
+
+  return knex('movies')
+    .insert([movie]) // param is in the format of the fields so use destructuring
+    .returning('*') // gets array of the inserted records
+    .then((res) => {
+      console.log("--> model::update returning: ", res);
+      return res;
+    })
 }
 
 function read(_id) {
@@ -80,38 +89,11 @@ function update(movie) {
   /*
     Update an existing movie.  See create for the format of the record.
     Must include the ID field in the record being passed.
+
+    Returns an array with movie object or empty array if nothing was updated (ie a bad id)
+      -- [ { one-movie } ]
+      -- []
   */
-  // return knex('movies')
-  //   .where('title', movie.title)
-  //   .whereNot('id', movie.id)
-  //   .then((aRecs) => {
-  //     if (aRecs.length)
-  //       throw { error: { message: "movie title already exists" }};
-  //   })
-  //   .then(() => {
-  //     return knex('movies')
-  //     .update(movie)
-  //     .where('id', movie.id)
-  //     .returning('*') // gets array of the inserted records
-  //   })
-  //   .then(aRecs => aRecs[0]) // unpack single record
-  //   .catch((err) => {
-  //     // if this is the error of a movie title exisitng, return it as an object
-  //     //   since this is an expected error, not catastrophic like a db connection problem
-  //     if (err.error.message) {
-  //       return err;
-  //     }
-  //     // otherwise rethrow the critical error so caller can handle it
-  //     throw err;
-  //   })
-
-  // THIS IS THE SIMPLE VERSION THAT DOESN'T CHECK IF TITLE ALREADY EXISTS
-  // return knex('movies')
-  //   .update(movie)
-  //   .where('id', movie.id)
-  //   .returning('*')
-  //   .then(aRecs => aRecs[0]); // unpack single record
-
   return knex('movies')
     .update(movie)
     .where('id', movie.id)
