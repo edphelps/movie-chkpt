@@ -32,9 +32,9 @@ function chkBodyParam(bodyParam, type, req, res, next) {
       break;
 
     case 'string': // all body params are a string!
-      console.log("**** testValue instanceof String: ", testValue instanceof String);
-      console.log("**** typeof testValue: ", typeof testValue);
-      console.log("**** testValue: ", testValue);
+      // console.log("**** testValue instanceof String: ", testValue instanceof String);
+      // console.log("**** typeof testValue: ", typeof testValue);
+      // console.log("**** testValue: ", testValue);
       typeCheckFailed = typeof testValue !== 'string';
       break;
 

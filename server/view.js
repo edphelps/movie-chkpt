@@ -13,7 +13,9 @@ const { chkBodyParams } = require('./params'); // destructure the chkBodyParams 
 *  @body year (int)
 *  @body rating (int)
 *  @body poster (url to a poster)
-*  @return the new movie record with id or forwards w/ next(Error)
+*  @return - the new movie record with id or
+*          - { error: { message: "movie already esits" } } or
+*          - forwards w/ next(Error)
 http POST localhost:3000/movies title='My title' director='director' year=2000 rating=5 poster='http://blah-blah'
 ***************************************************** */
 router.post('', (req, res, next) => {

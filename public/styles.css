@@ -4,106 +4,65 @@
 
 body {
   /* to keep page form exceeding width of the banner */
-  max-width: 940px;
+  /* max-width: 940px; */
 }
 
 /* background banner at top of page */
 #banner {
-  /* Set a dark gray background color to blend with image to lighten the image */
-  /* background: #626262 url("./images/banner.png") no-repeat center; */
-  /* background-blend-mode: screen; */
 
-  /* background: url("./images/banner.png") no-repeat center; */
-
-  /* background-image: url("./images/banner.jpg") */
-  /* background: url("./images/banner.jpg") no-repeat center; */
 }
 
-#logo {
-  width: 100px;
-}
 
-/* spinner shown while waitnig for ajax calls */
+/* spinner shown while waiting for ajax calls */
 .spinner {
   width: 100px;
   height: 100px;
   text-align: center;
 }
 
-/* "Volunteer Assignments" title in banner */
+/* "My movie ratings" title in banner */
 #app-title {
-  /* color: black;
 
-  text-shadow:
-  0 0 10px #fff,
-  0 0 20px #fff,
-  0 0 30px #fff,
-  0 0 40px #fff,
-  0 0 70px #fff,
-  0 0 80px #fff,
-  0 0 100px #fff,
-  0 0 150px #fff; */
-
-  /* text-shadow: 0 0 10px #fff,
-  0 0 20px #fff,
-  0 0 30px #fff,
-  0 0 40px #ff00de,
-  0 0 70px #ff00de,
-  0 0 80px #ff00de,
-  0 0 100px #ff00de,
-  0 0 150px #ff00de; */
-
-  /* text-shadow:
-    -1px -1px 0 white,
-    1px -1px 0 white,
-    -1px 1px 0 white,
-    1px 1px 0 white; */
 }
 
 /* *****************************************
-*  LOGIN FORM
+*  IMG -- handle broken poster urls
 ******************************************** */
 
- #login-fieldset input {
+img {
+  min-height: 50px;
+}
+
+/* Cover up the default broken image gif */
+img:before {
+  content: " ";
+  display: block;
+
+  position: absolute;
+  top: -10px;
+  left: 0;
+  height: calc(100% + 10px);
+  width: 100%;
+  background-color: rgb(230, 230, 230);
+  border: 2px dotted rgb(200, 200, 200);
   border-radius: 5px;
-  width: 180px;
-  margin-left: 2px;
-}
- #login-fieldset ::placeholder {
-    color: grey;
-    opacity: 0.5;
-}
-fieldset {
-  padding: 10px 15px 7px 10px;
-  margin-bottom: 3px;
-  width: 290px;
-
-  border: solid 2px black;
-  border-radius: 10px;
-  /* box-shadow: 0 0 20px 3px black; */
-
-  color: white;
-  font-weight: lighter;
-
-  /* set background in case app gets stuck before setting valid or invalid classes */
-  background: lightgray;
 }
 
-.login--valid {
-  background: rgb(81, 142, 48);
-  /* background: rgb(48, 101, 26); */
-  /* background: rgb(35, 80, 19); */
-  /* background: #138D75; */
-  /* border-color: darkgrey; */
-  box-shadow: 0 0 10px 1px black;
-}
+/* display message for broken image */
+img:after {
+  content: "\f127" " Broken Image of " attr(alt);
+  display: block;
+  font-size: 16px;
+  font-style: normal;
+  font-family: FontAwesome;
+  color: rgb(100, 100, 100);
 
-.login--invalid {
-  background: #CB4335;
-  box-shadow: 0 0 10px 1px black;
-  /* box-shadow: 0 0 20px 3px black; */
+  position: absolute;
+  top: 5px;
+  left: 0;
+  width: 100%;
+  text-align: center;
 }
-
 
 /* *****************************************
 *  PAGE CONTENT AREA
@@ -115,11 +74,20 @@ fieldset {
   padding: 15px;
 }
 
+/* content area below the menu bar */
+.error-message {
+  background-color: lavender;
+  margin: 0;
+  /* padding: 15px; */
+}
+
 /* Marker for divs that are filled in by ajax.
    When changing to another menu all divs with this class are set to "".
    This prevents the problem of the card accordians shadowing each other's
-   ID names sine the all use "accordion" and set the assignment id's with
-   the same naming covnetion. */
+   ID names since the all use "accordion" and set the assignment id's with
+   the same naming covnetion. IE, if an accordion is setup but not removed
+   from existence when a second accordion is setup they will have elements
+   with the same name and confuse bootstrap. */
 .auto-clear {
    /* intentionally blank */
 }

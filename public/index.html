@@ -16,12 +16,12 @@
     <!-- ============================================= -->
     <!-- BANNER -->
     <!-- ============================================= -->
-    <div id="banner" class="bg-primary">
+    <div id="banner" class="bg-secondary">
       <!-- ROW -->
-      <div class="row p-3 d-flex align-items-end">
+      <div class="row pt-3 d-flex align-items-end">
         <!-- COLUMN title -->
         <div class="col">
-          <h2 id="app-title" class="font-weight-bold text-center text-light">My movie ratings</h3>
+          <h2 id="app-title" class="p-0 m-0 font-weight-bold text-center text-light">My movie ratings</h3>
         </div> <!-- col -->
       </div> <!-- row -->
     </div> <!-- banner -->
@@ -31,7 +31,7 @@
     <!-- NAVIGATION -->
     <!-- ============================================= -->
 
-    <nav class="navbar navbar-expand-sm navbar-dark bg-primary">
+    <nav class="navbar navbar-expand-sm navbar-dark bg-secondary">
       <!-- hamburger menu setup magic -->
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup">
         <span class="navbar-toggler-icon"></span>
@@ -45,6 +45,13 @@
       </div>
     </nav>
 
+    <!-- ============================================= -->
+    <!-- CONTENT - Error message display -->
+    <!-- ============================================= -->
+    <div id="content--error">
+      <p class="pl-2 text-light bg-danger error-message" id="error-message"></p>
+    </div>
+
 
     <!-- ============================================= -->
     <!-- CONTENT - Home -->
@@ -53,12 +60,6 @@
 
       <p>&nbsp;</p>
       <h2 class="text-center ml-3">Use the "List movies" menu choice to display your movies and ratings</h2>
-      <p>TODO<br>
-         -- spread out the table a bit<br>
-         -- prevent adding movie with existing title<br>
-         -- add a hidden error reporting section under the menu<br>
-         -- be ok with an empty database<br>
-         -- handle bad poster urls</p>
       <p class="text-center ml-3">Poster images can be found<br><a  target="_blank" href="https://www.empireonline.com/movies/features/best-posters/">here</a>  </p>
 
     </div>
@@ -67,58 +68,73 @@
     <!-- CONTENT - List movies -->
     <!-- ============================================= -->
     <div id="content--list-movies" class="content" hidden>
+
+      <!-- Spinner's hidden flag controlled by js -->
+      <!-- A bit of a kludge, the div around the spinner doesn't hide and adds space below menu -->
+      <div class="d-flex justify-content-center">
+        <img class="spinner mt-4 mb-2" src="./spinner.gif" alt="" hidden>
+      </div>
+
       <div id="list-of-movies">
-        <p>List movies page content loads here</p>
+        <!-- List movies page content loads here -->
       </div>
     </div>
 
     <!-- ============================================= -->
-    <!-- SUB CONTENT - List movies - Edit a movie -->
+    <!-- CONTENT - List movies - Edit a movie / Create new movie -->
     <!-- ============================================= -->
     <div id="content--list-movies--edit" class="content" hidden>
+
       <div class="row mt-3">
 
         <!-- MOVIE INFORMATION FORM -->
-        <div class="col">
+        <div class="col-8">
           <form class="ml-3" onsubmit="return onSubmitMovie()" id='movie-form' method="post">
 
-            // set this field to 'edit' or 'create' depending on which is driving the form
+            <!-- set this field to 'edit' or 'create' depending on which is driving the form -->
             <input type="hidden" name="action" value="">
-            
-            // this field only set when editing an existing movie
+
+            <!-- set this field when editing an existing movie -->
             <input type="hidden" name="id" value="">
 
-            <table>
-              <tbody>
-                <tr>
-                  <th>Title</th>
-                  <td><input type="text" name="title" required autofocus></td>
-                </tr>
-                <tr>
-                  <th>Director</th>
-                  <td><input type="text" name="director" required></td>
-                </tr>
-                <tr>
-                  <th>Year</th>
-                  <td><input type="number" name="year" min="1900" max="2018" required></td>
-                </tr>
-                <tr>
-                  <th>Rating</th>
-                  <td><input type="number" name="rating" min="1" max="5" required></td>
-                </tr>
-                <tr>
-                  <th>Poster URL</th>
-                  <td><input type="text" name="poster" required></td>
-                </tr>
-              </tbody>
-            </table>
+            <div class="form-group row">
+              <label for="title" class="col-sm-2 col-form-label">Title</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control"  name="title" required autofocus>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="director" class="col-sm-2 col-form-label">Director</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control"  name="director"  required>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="year" class="col-sm-2 col-form-label">Year</label>
+              <div class="col-sm-10">
+                <input type="number" class="form-control"  name="year"  min="1900" max="2018" required>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="rating" class="col-sm-2 col-form-label">Rating</label>
+              <div class="col-sm-10">
+                <input type="number" class="form-control"  name="rating" min="1" max="5" required>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="poster" class="col-sm-2 col-form-label">Poster&nbsp;url</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control"  name="poster"  required>
+              </div>
+            </div>
+
             <p class="text-center mt-3"><input class="btn btn-primary" type="submit" value="Save"></p>
           </form>
         </div>
 
         <!-- POSTER IMAGE IF EDITING EXISTING RECORD -->
-        <div class="col">
-          <img id='poster-image' src="" width="200">
+        <div class="col-4">
+          <img id='poster-image' src="" width="200" alt="poster">
         </div>
       </div> <!-- row -->
 
