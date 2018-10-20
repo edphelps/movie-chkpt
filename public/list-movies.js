@@ -8,6 +8,38 @@ function clearErrorMessage() {
 }
 
 
+// ==========================================================
+// Fill in movie form fields,
+// - sAction - controls what happends when form is submitted
+// - sSubmitBtn - text for submitbutton
+// - oMovie, optional
+function fillFormFields(sAction, sSubmitBtn, oMovie = { id: "", title: "", director: "", year: "", rating: "", poster: ""}) {
+  frmMovie = document.getElementById("movie-form");
+  frmMovie.action.value = sAction;
+  frmMovie.id.value = oMovie.id;
+  frmMovie.title.value = oMovie.title;
+  frmMovie.director.value = oMovie.director;
+  frmMovie.year.value = oMovie.year;
+  frmMovie.rating.value = oMovie.rating;
+  frmMovie.poster.value = oMovie.poster;
+  frmMovie.submit.value = sSubmitBtn;
+  document.getElementById("poster-image").src = oMovie.poster;
+}
+
+// =========================================================
+// Return a movie object from the form fields
+function getMovieFromForm() {
+  const frm = document.getElementById("movie-form");
+  return {
+    id: frm.id.value, // this is null when creating a new movie
+    title: frm.title.value,
+    director: frm.director.value,
+    rating: frm.rating.value,
+    year: frm.year.value,
+    poster: frm.poster.value,
+  };
+}
+
 // =========================================================
 // Submit button clicked on edit movie page.
 // Action driven by 'action' hidden element:
@@ -30,22 +62,17 @@ function onSubmitMovie() {
     let oMovie = {};
     switch (action) {
 
-      // SWITCH TO EDIT MODE
+      // SWITCH TO EDIT MODE -------------------
       case 'view':
         onclickEdit(document.getElementById("movie-form").id.value);
         break;
 
-      // UPDATE AN EXISTING MOVIE RECORD
+      // UPDATE AN EXISTING MOVIE RECORD ------
       case 'edit':
-        oMovie = {
-          title: document.getElementById("movie-form").title.value,
-          director: document.getElementById("movie-form").director.value,
-          rating: document.getElementById("movie-form").rating.value,
-          year: document.getElementById("movie-form").year.value,
-          poster: document.getElementById("movie-form").poster.value,
-        };
+        oMovie = getMovieFromForm();
         console.log("*** post val: ", oMovie);
-        axios.put(URL+document.getElementById("movie-form").id.value, oMovie)
+        // axios.put(URL+document.getElementById("movie-form").id.value, oMovie)
+        axios.put(URL+oMovie.id, oMovie)
           .then((res) => {
             if (res.data.error)
               displayErrorMessage(res.data.error.message);
@@ -60,15 +87,9 @@ function onSubmitMovie() {
           });
         break;
 
-      // CREATE A NEW MOVIE RECORD
+      // CREATE A NEW MOVIE RECORD -------------
       case 'create':
-        oMovie = {
-          title: document.getElementById("movie-form").title.value,
-          director: document.getElementById("movie-form").director.value,
-          rating: document.getElementById("movie-form").rating.value,
-          year: document.getElementById("movie-form").year.value,
-          poster: document.getElementById("movie-form").poster.value,
-        };
+        oMovie = getMovieFromForm();
         console.log("*** post val: ", oMovie);
         axios.post(URL, oMovie)
           .then((res) => {
@@ -118,7 +139,6 @@ function onclickDelete(movieId) {
 // setup form to view a movie
 function onclickView(movieId) {
   clearErrorMessage();
-  console.log("** EDIT: ", movieId);
   axios.get(URL + movieId)
     .then((res) => {
       const oMovie = res.data;
@@ -128,21 +148,18 @@ function onclickView(movieId) {
       changeContentArea(elemMovieForm);
 
       // fill in the forms and image from the db record
-      frmMovie = document.getElementById("movie-form");
-      frmMovie.action.value = 'view';
-      frmMovie.id.value = oMovie.id;
+      fillFormFields('view', 'Edit this movie', oMovie);
 
-      frmMovie.title.value = oMovie.title; frmMovie.title.setAttribute("readonly", true);
-      frmMovie.director.value = oMovie.director; frmMovie.director.setAttribute("readonly", true);
-      frmMovie.year.value = oMovie.year; frmMovie.year.setAttribute("readonly", true);
-      frmMovie.rating.value = oMovie.rating; frmMovie.rating.setAttribute("readonly", true);
-      frmMovie.poster.value = oMovie.poster; frmMovie.poster.setAttribute("readonly", true);
+      frmMovie = document.getElementById("movie-form");
+
+      // set readonly flag
+      for (const elem of frmMovie.querySelectorAll('#movie-form input'))
+        elem.setAttribute("readonly", true);
 
       // unhide the poster element (it's hidden when adding a new movie)
       document.getElementById("poster-image").style.display = "block";
-      document.getElementById("poster-image").src = oMovie.poster;
+      // document.getElementById("poster-image").src = oMovie.poster;
 
-      frmMovie.submit.value = "Edit this movie";
       frmMovie.submit.focus()
     })
     .catch((error) => {
@@ -157,7 +174,6 @@ function onclickView(movieId) {
 // setup form to edit a movie
 function onclickEdit(movieId) {
   clearErrorMessage();
-  console.log("** EDIT: ", movieId);
   axios.get(URL + movieId)
     .then((res) => {
       const oMovie = res.data;
@@ -167,22 +183,21 @@ function onclickEdit(movieId) {
       changeContentArea(elemMovieForm);
 
       // fill in the forms and image from the db record
-      frmMovie = document.getElementById("movie-form");
-      frmMovie.action.value = 'edit';
-      frmMovie.id.value = oMovie.id;
+      fillFormFields('edit', 'Save', oMovie);
 
-      frmMovie.title.value = oMovie.title; frmMovie.title.removeAttribute("readonly");
-      frmMovie.director.value = oMovie.director; frmMovie.director.removeAttribute("readonly");
-      frmMovie.year.value = oMovie.year; frmMovie.year.removeAttribute("readonly");
-      frmMovie.rating.value = oMovie.rating; frmMovie.rating.removeAttribute("readonly");
-      frmMovie.poster.value = oMovie.poster; frmMovie.poster.removeAttribute("readonly");
+      frmMovie = document.getElementById("movie-form");
+
+      // clear readonly flag set by onclickView()
+      for (const elem of frmMovie.querySelectorAll('#movie-form input'))
+        elem.removeAttribute("readonly")
 
       // unhide the poster element (it's hidden when adding a new movie)
       document.getElementById("poster-image").style.display = "block";
-      document.getElementById("poster-image").src = oMovie.poster;
+      // document.getElementById("poster-image").src = oMovie.poster;
 
-      frmMovie.submit.value = "Save";
-      frmMovie.title.focus()
+      frmMovie.title.focus();
+      frmMovie.title.setSelectionRange(0, frmMovie.title.value.length);
+
     })
     .catch((error) => {
       console.log("---------- AJAX error ----------");
@@ -196,17 +211,16 @@ function onclickEdit(movieId) {
 // setup form to add a new movie
 function onclickNewMovie() {
   clearErrorMessage();
-  console.log("** NEW");
 
   // clear the form fields of residual values
+  fillFormFields('create', 'add');
+
   frmMovie = document.getElementById("movie-form");
-  frmMovie.action.value = 'create';
-  frmMovie.title.value = ""; frmMovie.title.removeAttribute("readonly");
-  frmMovie.director.value = ""; frmMovie.director.removeAttribute("readonly");
-  frmMovie.year.value = ""; frmMovie.year.removeAttribute("readonly");
-  frmMovie.rating.value = ""; frmMovie.rating.removeAttribute("readonly");
-  frmMovie.poster.value = ""; frmMovie.poster.removeAttribute("readonly");
-  
+
+  // clear readonly flag set by onclickView()
+  for (const elem of frmMovie.querySelectorAll('#movie-form input'))
+    elem.removeAttribute("readonly")
+
   // hide the poster image since there's nothing to display when adding a new movie
   document.getElementById("poster-image").style.display = "none";
 
@@ -214,7 +228,6 @@ function onclickNewMovie() {
   const elemMovieForm = document.getElementById("content--list-movies--edit");
   changeContentArea(elemMovieForm);
 
-  frmMovie.submit.value = "Add";
   frmMovie.title.focus();
 
   return false;
@@ -255,7 +268,8 @@ function templateMovieList(aMovies) {
 function displayMovieList() {
 
   // show spinner
-  document.querySelector("#content--list-movies .spinner").removeAttribute("hidden");
+  // document.querySelector("#content--list-movies .spinner").removeAttribute("hidden");
+  document.querySelector("#content--list-movies .spinner").style.display = "block";
 
   axios.get(URL)
     .then((res) => {
@@ -273,7 +287,8 @@ function displayMovieList() {
       const elemDiv =  document.getElementById('list-of-movies');
 
       // hide spinner
-      document.querySelector("#content--list-movies .spinner").setAttribute("hidden", true);
+      // document.querySelector("#content--list-movies .spinner").setAttribute("hidden", true);
+      document.querySelector("#content--list-movies .spinner").style.display = "none";
 
       // put everything in the element for display
       elemDiv.innerHTML = htmlMovieList;
