@@ -74,11 +74,14 @@ function onSubmitMovie() {
         // axios.put(URL+document.getElementById("movie-form").id.value, oMovie)
         axios.put(URL+oMovie.id, oMovie)
           .then((res) => {
-            if (res.data.error)
+            if (res.data.error) {
               displayErrorMessage(res.data.error.message);
-
-            // redisplay/refresh the list of all movies
-            onMenuListMovies();
+              // stay in this view
+            }
+            else {
+              // redisplay/refresh the list of all movies
+              onMenuListMovies();
+            }
           })
           .catch((error) => {
             console.log("---------- AJAX error ----------");
@@ -93,11 +96,13 @@ function onSubmitMovie() {
         console.log("*** post val: ", oMovie);
         axios.post(URL, oMovie)
           .then((res) => {
-            if (res.data.error)
+            if (res.data.error) {
               displayErrorMessage(res.data.error.message);
-
-            // redisplay/refresh the list of all movies
-            onMenuListMovies();
+              // stay in this view
+            } else {
+              // redisplay/refresh the list of all movies
+              onMenuListMovies();
+            }
           })
           .catch((error) => {
             console.log("---------- AJAX error ----------");
