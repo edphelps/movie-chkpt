@@ -60,6 +60,10 @@
 
       <p>&nbsp;</p>
       <h2 class="text-center ml-3">Use the "List movies" menu choice to display your movies and ratings</h2>
+      <p>- move the error message to view from the model</p>
+      <p>- confirm error handling throughout (can't delete, can't view, can't edit)</p>
+      <p>- seperate view and edit</p>
+      <p>- create hash for view only</p>
       <p class="text-center ml-3">Poster images can be found<br><a  target="_blank" href="https://www.empireonline.com/movies/features/best-posters/">here</a>  </p>
 
     </div>
@@ -70,7 +74,6 @@
     <div id="content--list-movies" class="content" hidden>
 
       <!-- Spinner's hidden flag controlled by js -->
-      <!-- A bit of a kludge, the div around the spinner doesn't hide and adds space below menu -->
       <div class="d-flex justify-content-center">
         <img class="spinner mt-4 mb-2" src="./spinner.gif" alt="" hidden>
       </div>
@@ -91,7 +94,7 @@
         <div class="col-8">
           <form class="ml-3" onsubmit="return onSubmitMovie()" id='movie-form' method="post">
 
-            <!-- set this field to 'edit' or 'create' depending on which is driving the form -->
+            <!-- set this field to 'view', 'edit', or 'create' depending on which is driving the form -->
             <input type="hidden" name="action" value="">
 
             <!-- set this field when editing an existing movie -->
@@ -100,7 +103,7 @@
             <div class="form-group row">
               <label for="title" class="col-sm-2 col-form-label">Title</label>
               <div class="col-sm-10">
-                <input type="text" class="form-control"  name="title" required autofocus>
+                <input type="text" class="form-control"  name="title" required>
               </div>
             </div>
             <div class="form-group row">
@@ -128,7 +131,7 @@
               </div>
             </div>
 
-            <p class="text-center mt-3"><input class="btn btn-primary" type="submit" value="Save"></p>
+            <p class="text-center mt-3"><input class="btn btn-primary" id="submit" name="submit" type="submit" value="Save"></p>
           </form>
         </div>
 

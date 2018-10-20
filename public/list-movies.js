@@ -9,7 +9,11 @@ function clearErrorMessage() {
 
 
 // =========================================================
-// Save new movie or update existing movie
+// Submit button clicked on edit movie page.
+// Action driven by 'action' hidden element:
+//   - 'view' - switch to edit mode
+//   - 'create' - create a new movie with form content
+//   - 'edit' - save the form / update the given movie
 function onSubmitMovie() {
   clearErrorMessage();
   try {
@@ -25,6 +29,11 @@ function onSubmitMovie() {
 
     let oMovie = {};
     switch (action) {
+
+      // SWITCH TO EDIT MODE
+      case 'view':
+        onclickEdit(document.getElementById("movie-form").id.value);
+        break;
 
       // UPDATE AN EXISTING MOVIE RECORD
       case 'edit':
@@ -106,6 +115,45 @@ function onclickDelete(movieId) {
 }
 
 // =========================================================
+// setup form to view a movie
+function onclickView(movieId) {
+  clearErrorMessage();
+  console.log("** EDIT: ", movieId);
+  axios.get(URL + movieId)
+    .then((res) => {
+      const oMovie = res.data;
+
+      // show the div with the movie editing form
+      const elemMovieForm = document.getElementById("content--list-movies--edit");
+      changeContentArea(elemMovieForm);
+
+      // fill in the forms and image from the db record
+      frmMovie = document.getElementById("movie-form");
+      frmMovie.action.value = 'view';
+      frmMovie.id.value = oMovie.id;
+
+      frmMovie.title.value = oMovie.title; frmMovie.title.setAttribute("readonly", true);
+      frmMovie.director.value = oMovie.director; frmMovie.director.setAttribute("readonly", true);
+      frmMovie.year.value = oMovie.year; frmMovie.year.setAttribute("readonly", true);
+      frmMovie.rating.value = oMovie.rating; frmMovie.rating.setAttribute("readonly", true);
+      frmMovie.poster.value = oMovie.poster; frmMovie.poster.setAttribute("readonly", true);
+
+      // unhide the poster element (it's hidden when adding a new movie)
+      document.getElementById("poster-image").style.display = "block";
+      document.getElementById("poster-image").src = oMovie.poster;
+
+      frmMovie.submit.value = "Edit this movie";
+      frmMovie.submit.focus()
+    })
+    .catch((error) => {
+      console.log("---------- AJAX error ----------");
+      console.log(error);
+      console.log("^^^^^^^^^^ AJAX error ^^^^^^^^^^");
+    });
+  return false;
+}
+
+// =========================================================
 // setup form to edit a movie
 function onclickEdit(movieId) {
   clearErrorMessage();
@@ -119,21 +167,22 @@ function onclickEdit(movieId) {
       changeContentArea(elemMovieForm);
 
       // fill in the forms and image from the db record
-      document.getElementById("movie-form").action.value = 'edit';
-      document.getElementById("movie-form").id.value = oMovie.id;
+      frmMovie = document.getElementById("movie-form");
+      frmMovie.action.value = 'edit';
+      frmMovie.id.value = oMovie.id;
 
-      document.getElementById("movie-form").title.value = oMovie.title;
-      document.getElementById("movie-form").director.value = oMovie.director;
-      document.getElementById("movie-form").year.value = oMovie.year;
-      document.getElementById("movie-form").rating.value = oMovie.rating;
-      document.getElementById("movie-form").poster.value = oMovie.poster;
+      frmMovie.title.value = oMovie.title; frmMovie.title.removeAttribute("readonly");
+      frmMovie.director.value = oMovie.director; frmMovie.director.removeAttribute("readonly");
+      frmMovie.year.value = oMovie.year; frmMovie.year.removeAttribute("readonly");
+      frmMovie.rating.value = oMovie.rating; frmMovie.rating.removeAttribute("readonly");
+      frmMovie.poster.value = oMovie.poster; frmMovie.poster.removeAttribute("readonly");
 
       // unhide the poster element (it's hidden when adding a new movie)
       document.getElementById("poster-image").style.display = "block";
       document.getElementById("poster-image").src = oMovie.poster;
 
-      // set focus (autofocus doesn't work on 2nd display of form)
-      document.getElementById("movie-form").title.focus()
+      frmMovie.submit.value = "Save";
+      frmMovie.title.focus()
     })
     .catch((error) => {
       console.log("---------- AJAX error ----------");
@@ -150,13 +199,14 @@ function onclickNewMovie() {
   console.log("** NEW");
 
   // clear the form fields of residual values
-  document.getElementById("movie-form").action.value = 'create';
-  document.getElementById("movie-form").title.value = "";
-  document.getElementById("movie-form").director.value = "";
-  document.getElementById("movie-form").year.value = "";
-  document.getElementById("movie-form").rating.value = "";
-  document.getElementById("movie-form").poster.value = "";
-
+  frmMovie = document.getElementById("movie-form");
+  frmMovie.action.value = 'create';
+  frmMovie.title.value = ""; frmMovie.title.removeAttribute("readonly");
+  frmMovie.director.value = ""; frmMovie.director.removeAttribute("readonly");
+  frmMovie.year.value = ""; frmMovie.year.removeAttribute("readonly");
+  frmMovie.rating.value = ""; frmMovie.rating.removeAttribute("readonly");
+  frmMovie.poster.value = ""; frmMovie.poster.removeAttribute("readonly");
+  
   // hide the poster image since there's nothing to display when adding a new movie
   document.getElementById("poster-image").style.display = "none";
 
@@ -164,8 +214,8 @@ function onclickNewMovie() {
   const elemMovieForm = document.getElementById("content--list-movies--edit");
   changeContentArea(elemMovieForm);
 
-  // set focus (autofocus doesn't work on 2nd display of form)
-  document.getElementById("movie-form").title.focus()
+  frmMovie.submit.value = "Add";
+  frmMovie.title.focus();
 
   return false;
 }
@@ -187,7 +237,7 @@ function templateMovieList(aMovies) {
   for (const movie of aMovies) {
     htmlMovies += `
       <tr>
-        <td><a href="#" onclick="onclickEdit(${movie.id})">${movie.title}</a></td>
+        <td><a href="#" onclick="onclickView(${movie.id})">${movie.title}</a></td>
         <td>${movie.director}</td>
         <td class="text-center">${movie.year}</td>
         <td class="text-center">${movie.rating}</td>
@@ -203,10 +253,13 @@ function templateMovieList(aMovies) {
 // =========================================================
 // renders the view listing all of the movies in the db
 function displayMovieList() {
+
   // show spinner
   document.querySelector("#content--list-movies .spinner").removeAttribute("hidden");
+
   axios.get(URL)
     .then((res) => {
+
       // sort movies by title
       const aMovies = res.data.sort((m1, m2) => m1.title.localeCompare(m2.title));
 
