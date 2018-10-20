@@ -64,6 +64,8 @@ app.use((err, req, res, next) => {
   const status = err.status || 500;
   console.log("======================= APP ERROR IN CONTROLLER =======================");
   console.log(err);
+  console.log('-------');
+  console.log(restructureError(err));
   console.log("^^^^^^^^^^^^^^^^^^^^^^^ APP ERROR IN CONTROLLER ^^^^^^^^^^^^^^^^^^^^^^");
   res.status(status).json(restructureError(err));
   next();

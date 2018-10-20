@@ -85,11 +85,48 @@ function onSubmitMovie() {
               onMenuListMovies();
             }
           })
-          .catch((error) => {
+          .catch(function (error) {
             console.log("---------- AJAX error on edit ----------");
-            console.log(error);
+            if (error.response) {
+              // The request was made and the server responded with a status code
+              // that falls out of the range of 2xx
+              console.log("error.response.data", error.response.data);
+              console.log("error.response.status", error.response.status);
+              console.log("error.response.headers", error.response.headers);
+              if (error.response.data.error) {
+                displayErrorMessage(error.response.data.error.message);
+              }
+              else {
+                displayErrorMessage("AJAX error in edit");
+              }
+            } else if (error.request) {
+              // The request was made but no response was received
+              // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+              // http.ClientRequest in node.js
+              console.log("error.request", error.request);
+              displayErrorMessage("AJAX error in edit");
+            } else {
+              // Something happened in setting up the request that triggered an Error
+              console.log('error.message: ', error.message);
+              displayErrorMessage(error.message);
+            }
+            console.log("error.config", error.config);
             console.log("^^^^^^^^^^ AJAX error on edit ^^^^^^^^^^");
           });
+          // .catch((error) => {
+          //   displayErrorMessage("res.data.error.message");
+          //   console.log("---------- AJAX error on edit ----------");
+          //   console.log(error);
+          //   console.log('--------');
+          //   if (error.response) {
+          //     // The request was made and the server responded with a status code
+          //     // that falls out of the range of 2xx
+          //     console.log("> data: ",error.response.data);
+          //     console.log("> status: ",error.response.status);
+          //     console.log("> headers: ",error.response.headers);
+          //   }
+          //   console.log("^^^^^^^^^^ AJAX error on edit ^^^^^^^^^^");
+          // });
         break;
 
       // CREATE A NEW MOVIE RECORD -------------

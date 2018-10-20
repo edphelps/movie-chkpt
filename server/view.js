@@ -119,7 +119,9 @@ router.put('/:id', (req, res, next) => {
       // if title exists for a differnt movie.id, setup error.message
       if (aRecs.length && aRecs[0].id != oMovie.id) {
         console.log("--- view::put -- movie exists");
-        res.status(201).json({ error: { message: "movie title already exists" }});
+        res.status(412).json({ error: { message: "unable to save, movie title already exists" }});
+        return;
+        // next(new Error("movie title already exists"));
       } else {
         console.log("--- view::put -- movie ok to update, aRecs", aRecs);
         // update the movie
@@ -130,12 +132,20 @@ router.put('/:id', (req, res, next) => {
             if (aRecs.length) {
               console.log("--- view::put -- success");
               res.status(201).json(aRecs[0]);
+              return;
             // movie not found so it couldn't be updated
             } else {
               console.log("--- view::put -- movie not fnd");
-              res.status(201).json({ error: { message: "movie not found" }});
+              res.status(404).json({ error: { message: "unabl;e to save, movie was deleted / id can't be found" }});
+              return;
             }
-        })
+          })
+          .catch((error) => {
+            error.MY_CAUSE = error.toString(); // otherwise the actual cause of the error doesn't get reported
+            console.log("--- view::put added a catch to update, error: ", error);
+            res.status(500).json(error);
+            return;
+          })
       }
     })
     .catch((error) => {
