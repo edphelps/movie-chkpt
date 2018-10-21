@@ -98,14 +98,14 @@ function onSubmitMovie() {
                 displayErrorMessage(error.response.data.error.message);
               }
               else {
-                displayErrorMessage("AJAX error in edit");
+                displayErrorMessage("AJAX error in edit (1)");
               }
             } else if (error.request) {
               // The request was made but no response was received
               // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
               // http.ClientRequest in node.js
               console.log("error.request", error.request);
-              displayErrorMessage("AJAX error in edit");
+              displayErrorMessage("AJAX error in edit (2)");
             } else {
               // Something happened in setting up the request that triggered an Error
               console.log('error.message: ', error.message);

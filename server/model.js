@@ -64,11 +64,15 @@ function readAll() {
 function update(movie) {
   return knex('movies')
     .update(movie)
-    .where('xid', movie.id)
+    .where('id', movie.id)
     .returning('*')
     .then((res) => {
       console.log("--> model::update returning: ", res);
       return res;
+    })
+    .catch((error) => {
+      console.log("%%% knex:update error :", error);
+      throw new Error(error.message);
     })
 }
 

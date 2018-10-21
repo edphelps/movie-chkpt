@@ -187,12 +187,16 @@ router.put('/:id', (req, res, next) => {
       // movie not found so it couldn't be updated
       } else {
         console.log("--- view::put -- movie not fnd");
-        res.status(404).json({ error: { message: "unabl;e to save, movie was deleted / id can't be found" }});
+        res.status(404).json({
+          error: {
+            message: "unable to save, movie was deleted / id can't be found"
+          }
+        }); // this will jump directly to the client axios catch
         return;
       }
     })
     .catch((error) => {
-      error.THE_CAUSE = error.toString(); // otherwise knex/db error message is lost for some reason
+      // error.THE_CAUSE = error.toString(); // otherwise knex/db error message is lost for some reason
       error.status = error.status || 500;
       console.log("--- view::put catch, error: ", error);
       // res.status(500).json(error);

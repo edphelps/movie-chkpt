@@ -6,6 +6,7 @@ const port = process.env.PORT || 3000;
 
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
+var clone = require('clone');
 
 const view = require('./view');
 
@@ -32,30 +33,27 @@ app.use((req, res, next) => {
 
 /* **************************************************
 *  restructureError()
+*  If not restructured information is lost when passed back to AJAX caller
 *  @param Error -- actual Error object with optional 'status'
-*  Returns object { status: 123, message: 'xxxx', stack: 'xxx' }
+*  Returns object { message: 'xxxx', status: 123, name: 'xxx', stack: 'xxx' }
 ***************************************************** */
 function restructureError(error) {
   // return if error not in the expected form
   if (!error.stack)
     return error;
 
-  // look for ' at ' text seperating error message from call stack
-  const i = error.stack.search(' at ');
-  if (i === -1)
-    return { message: error.message, stack: 'undetermined', status: error.status };
-
-  // parse the call_stack portion of the string from end of error.stack
   const restructured = {
     error: {
       message: error.message,
-      stack: error.stack.slice(i + 4),
+      status: error.status,
+      name: error.name,
     },
   };
-  if (error.name)
-    restructured.error.name = error.name;
-  if (error.status)
-    restructured.error.status = error.status;
+
+  // look for " at " which seperates the error message from actual call stack
+  const i = error.stack.search(' at ');
+  restructured.error.stack = (i === -1) ? error.stack : error.stack.slice(i + 4);
+
   return restructured;
 }
 
