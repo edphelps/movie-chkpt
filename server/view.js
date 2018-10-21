@@ -39,7 +39,6 @@ router.post('', (req, res, next) => {
 
   model.readTitle(oMovie.title)
     .then((aRecs) => {
-
       // if title already exists , error out
       if (aRecs.length) {
         console.log("--- view::post -- movie exists");
