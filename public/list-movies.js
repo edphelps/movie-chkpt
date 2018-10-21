@@ -77,6 +77,7 @@ function onSubmitMovie() {
           .then((res) => {
             console.log("=== onsubmitMovie res: ", res);
             if (res.data.error) {
+              console.log("=== onsubmitMovie in error state, display: ", res.data.error.message);
               displayErrorMessage(res.data.error.message);
               // stay in this view
             }
@@ -85,7 +86,7 @@ function onSubmitMovie() {
               onMenuListMovies();
             }
           })
-          .catch(function (error) {
+          .catch((error) => {
             console.log("---------- AJAX error on edit ----------");
             if (error.response) {
               // The request was made and the server responded with a status code

@@ -52,6 +52,8 @@ function restructureError(error) {
       stack: error.stack.slice(i + 4),
     },
   };
+  if (error.name)
+    restructured.error.name = error.name;
   if (error.status)
     restructured.error.status = error.status;
   return restructured;
@@ -63,6 +65,7 @@ function restructureError(error) {
 app.use((err, req, res, next) => {
   const status = err.status || 500;
   console.log("======================= APP ERROR IN CONTROLLER =======================");
+  console.log('status: ',status);
   console.log(err);
   console.log('-------');
   console.log(restructureError(err));

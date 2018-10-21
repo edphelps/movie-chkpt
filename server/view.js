@@ -161,44 +161,45 @@ router.put('/:id', (req, res, next) => {
   console.log("--- view::put -- checking is title exists");
   model.readTitle(oMovie.title)
     .then((aRecs) => {
-
       // if title exists for a differnt movie.id, error out
       if (aRecs.length && aRecs[0].id != oMovie.id) {
-        console.log("--- view::put -- movie exists");
-        res.status(412).json({ error: { message: "unable to save, movie title already exists" }});
+        console.log("--- view::put -- movie title already exists");
+        const error = new Error("unable to save, movie title already exists" );
+        error.status = 412;
+        throw error;
         return;
       }
-
-      console.log("--- view::put -- movie ok to update, aRecs", aRecs);
+    })
+    // attempt update
+    .then(() => {
+      console.log("--- view::put -- movie ok to update");
       // update the movie
-      model.update(oMovie)
-        .then((aRecs) => {
-          console.log("--- view::put -- updated, aRecs", aRecs);
-          // movie successfully updated
-          if (aRecs.length) {
-            console.log("--- view::put -- success");
-            res.status(201).json(aRecs[0]);
-            return;
-          // movie not found so it couldn't be updated
-          } else {
-            console.log("--- view::put -- movie not fnd");
-            res.status(404).json({ error: { message: "unabl;e to save, movie was deleted / id can't be found" }});
-            return;
-          }
-        })
-        .catch((error) => {
-          error.THE_CAUSE = error.toString(); // otherwise the actual cause of the error doesn't get reported
-          console.log("--- view::put added a catch to update, error: ", error);
-          res.status(500).json(error);
-          return;
-        })
-
+      return model.update(oMovie);
+    })
+    // check success of update
+    .then((aRecs) => {
+      console.log("--- view::put -- updated, aRecs", aRecs);
+      // movie successfully updated
+      if (aRecs.length) {
+        console.log("--- view::put -- success");
+        res.status(201).json(aRecs[0]);
+        return;
+      // movie not found so it couldn't be updated
+      } else {
+        console.log("--- view::put -- movie not fnd");
+        res.status(404).json({ error: { message: "unabl;e to save, movie was deleted / id can't be found" }});
+        return;
+      }
     })
     .catch((error) => {
-      console.log("--- view::put -- caught error: ", error);
-      error.status = 400;
+      error.THE_CAUSE = error.toString(); // otherwise knex/db error message is lost for some reason
+      error.status = error.status || 500;
+      console.log("--- view::put catch, error: ", error);
+      // res.status(500).json(error);
+      // return;
       next(error);
     });
+
 
   // model.update(oMovie)
   //   .then((updatedMovie) => {
@@ -209,6 +210,80 @@ router.put('/:id', (req, res, next) => {
   //     next(error);
   //   });
 });
+
+// ***************************************************** */
+// router.put('/:id', (req, res, next) => {
+//
+//   const oParams = {
+//     title: 'string',
+//     director: 'string',
+//     year: 'int',
+//     rating: 'int',
+//     poster: 'string',
+//   };
+//   if (!chkBodyParams(oParams, req, res, next)) // will setup the error if param is missing
+//     return;
+//   const oMovie = {
+//     id: req.params.id,
+//     title: req.body.title,
+//     director: req.body.director,
+//     year: req.body.year,
+//     rating: req.body.rating,
+//     poster: req.body.poster,
+//   };
+//
+//   // check if title already exists
+//   console.log("--- view::put -- checking is title exists");
+//   model.readTitle(oMovie.title)
+//     .then((aRecs) => {
+//
+//       // if title exists for a differnt movie.id, error out
+//       if (aRecs.length && aRecs[0].id != oMovie.id) {
+//         console.log("--- view::put -- movie exists");
+//         res.status(412).json({ error: { message: "unable to save, movie title already exists" }});
+//         return;
+//       }
+//
+//       console.log("--- view::put -- movie ok to update, aRecs", aRecs);
+//       // update the movie
+//       model.update(oMovie)
+//         .then((aRecs) => {
+//           console.log("--- view::put -- updated, aRecs", aRecs);
+//           // movie successfully updated
+//           if (aRecs.length) {
+//             console.log("--- view::put -- success");
+//             res.status(201).json(aRecs[0]);
+//             return;
+//           // movie not found so it couldn't be updated
+//           } else {
+//             console.log("--- view::put -- movie not fnd");
+//             res.status(404).json({ error: { message: "unabl;e to save, movie was deleted / id can't be found" }});
+//             return;
+//           }
+//         })
+//         .catch((error) => {
+//           error.THE_CAUSE = error.toString(); // otherwise the actual cause of the error doesn't get reported
+//           console.log("--- view::put added a catch to update, error: ", error);
+//           res.status(500).json(error);
+//           return;
+//         })
+//
+//     })
+//     .catch((error) => {
+//       console.log("--- view::put -- caught error: ", error);
+//       error.status = 400;
+//       next(error);
+//     });
+//
+//   // model.update(oMovie)
+//   //   .then((updatedMovie) => {
+//   //     res.status(201).json(updatedMovie);
+//   //   })
+//   //   .catch((error) => {
+//   //     error.status = 400;
+//   //     next(error);
+//   //   });
+// });
 
 // router.put('/:id', (req, res, next) => {
 //   const oParams = {

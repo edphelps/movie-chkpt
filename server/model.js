@@ -64,7 +64,7 @@ function readAll() {
 function update(movie) {
   return knex('movies')
     .update(movie)
-    .where('id', movie.id)
+    .where('xid', movie.id)
     .returning('*')
     .then((res) => {
       console.log("--> model::update returning: ", res);
