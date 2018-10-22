@@ -27,7 +27,7 @@ function fillFormFields(sAction, sSubmitBtn, oMovie = { id: "", title: "", direc
 }
 
 // =========================================================
-// Return a movie object from the form fields
+// Return a movie object from the form field value
 function getMovieFromForm() {
   const frm = document.getElementById("movie-form");
   return {
@@ -114,20 +114,6 @@ function onSubmitMovie() {
             console.log("error.config", error.config);
             console.log("^^^^^^^^^^ AJAX error on edit ^^^^^^^^^^");
           });
-          // .catch((error) => {
-          //   displayErrorMessage("res.data.error.message");
-          //   console.log("---------- AJAX error on edit ----------");
-          //   console.log(error);
-          //   console.log('--------');
-          //   if (error.response) {
-          //     // The request was made and the server responded with a status code
-          //     // that falls out of the range of 2xx
-          //     console.log("> data: ",error.response.data);
-          //     console.log("> status: ",error.response.status);
-          //     console.log("> headers: ",error.response.headers);
-          //   }
-          //   console.log("^^^^^^^^^^ AJAX error on edit ^^^^^^^^^^");
-          // });
         break;
 
       // CREATE A NEW MOVIE RECORD -------------
@@ -334,6 +320,8 @@ function templateMovieList(aMovies) {
 // =========================================================
 // renders the view listing all of the movies in the db
 function displayMovieList() {
+
+  clearErrorMessage();
 
   // show spinner
   // document.querySelector("#content--list-movies .spinner").removeAttribute("hidden");
