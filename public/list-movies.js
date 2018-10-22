@@ -7,6 +7,8 @@ function clearErrorMessage() {
   document.getElementById("error-message").innerText = "";
 }
 
+// Logs error information AND
+//   calls displayErrorMessage() to show the error to user
 function handleError(error, sCalledFrom) {
   console.log(`---------- AJAX error in ${sCalledFrom} ----------`);
   if (error.response) {
@@ -101,42 +103,30 @@ function onSubmitMovie() {
       case 'edit':
         oMovie = getMovieFromForm();
         console.log('------------------------------');
-        console.log("=== onsubmitMovie, oMovie: ", oMovie);
+        console.log("=== onsubmitMovie-edit, oMovie: ", oMovie);
         // axios.put(URL+document.getElementById("movie-form").id.value, oMovie)
         axios.put(URL+oMovie.id, oMovie)
           .then((res) => {
             console.log("=== onsubmitMovie res: ", res);
-            if (res.data.error) {
-              console.log("=== onsubmitMovie in error state, display: ", res.data.error.message);
-              displayErrorMessage(res.data.error.message);
-              // stay in this view
-            }
-            else {
-              // redisplay/refresh the list of all movies
-              onMenuListMovies();
-            }
+            onMenuListMovies();
           })
           .catch((error) => {
             handleError(error, "onSubmiMovie-edit")
+            // stay in the same view after displaying error message
           });
         break;
 
       // CREATE A NEW MOVIE RECORD -------------
       case 'create':
         oMovie = getMovieFromForm();
-        console.log("*** post val: ", oMovie);
+        console.log("*** create movie: ", oMovie);
         axios.post(URL, oMovie)
           .then((res) => {
-            if (res.data.error) {
-              displayErrorMessage(res.data.error.message);
-              // stay in this view
-            } else {
-              // redisplay/refresh the list of all movies
-              onMenuListMovies();
-            }
+            onMenuListMovies();
           })
           .catch(function (error) {
-            handleError(error, 'onSubmitMovie-create')
+            handleError(error, 'onSubmitMovie-create');
+            // stay in the same view after displaying error message
           });
         break;
 
@@ -162,9 +152,7 @@ function onclickDelete(movieId) {
       onMenuListMovies();
     })
     .catch((error) => {
-      console.log("---------- AJAX error ----------");
-      console.log(error);
-      console.log("^^^^^^^^^^ AJAX error ^^^^^^^^^^");
+      handleError(error, "onclickDelete")
     });
   return false;
 }
@@ -176,7 +164,6 @@ function onclickView(movieId) {
 
   axios.get(URL + movieId)
     .then((res) => {
-      // if the axios.get() fails to find the ID it
       const oMovie = res.data
 
       // show the div with the movie editing form
@@ -234,9 +221,7 @@ function onclickEdit(movieId) {
 
     })
     .catch((error) => {
-      console.log("---------- AJAX error ----------");
-      console.log(error);
-      console.log("^^^^^^^^^^ AJAX error ^^^^^^^^^^");
+      handleError(error, "onclickEdit")
     });
   return false;
 }
@@ -330,8 +315,6 @@ function displayMovieList() {
       elemDiv.innerHTML = htmlMovieList;
     })
     .catch((error) => {
-      console.log("---------- AJAX error ----------");
-      console.log(error);
-      console.log("^^^^^^^^^^ AJAX error ^^^^^^^^^^");
+      handleError(error, "displayMovieList")
     });
 }
