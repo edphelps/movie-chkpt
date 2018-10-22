@@ -74,7 +74,7 @@ app.use((err, req, res, next) => {
 
 if (process.env.NODE_ENV !== 'test') {
   app.listen(port, () => {
-    console.log(`Bookstore API listening on port ${port}!`);
+    console.log(`Movie API listening on port ${port}!`);
   });
 }
 

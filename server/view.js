@@ -37,28 +37,45 @@ router.post('', (req, res, next) => {
     poster: req.body.poster,
   };
 
+  // check if title already exitsts
   model.readTitle(oMovie.title)
     .then((aRecs) => {
-      // if title already exists , error out
+      // if title already exists, error out
       if (aRecs.length) {
         console.log("--- view::post -- movie exists");
-        res.status(412).json({ error: { message: "unable to save, movie title already exists" }});
+        const error = new Error("unable to save, movie title already exists" );
+        error.status = 412;
+        throw error;
         return;
       }
-      model.create(oMovie)
-        .then((aRecs) => {
-          res.status(201).json(aRecs[0]);
-        })
-        .catch((error) => {
-          error.THE_CAUSE = error.toString(); // otherwise the actual cause of the error doesn't get reported
-          console.log("--- view::post added a catch to update, error: ", error);
-          res.status(500).json(error);
-          return;
-        })
+    })
+    // attempt to create new movie
+    .then(() => {
+      console.log("--- view::post -- movie ok to create");
+      return model.create(oMovie);
+    })
+    // check success of create
+    .then((aRecs) => {
+      console.log("--- view::post -- created, aRecs", aRecs);
+      // movie successfully created
+      if (aRecs.length) {
+        console.log("--- view::post -- success");
+        res.status(201).json(aRecs[0]);
+        return;
+      // not sure what happened, failure
+      } else {
+        console.log("--- view::post -- failure");
+        res.status(500).json({
+          error: {
+            message: "unknown error creating new movie"
+          }
+        }); // this will jump directly to the browser js axios .catch()
+        return;
+      }
     })
     .catch((error) => {
-      console.log("--- view::post -- caught error: ", error);
-      error.status = 400;
+      error.status = error.status || 500;
+      console.log("--- view::put catch, error: ", error);
       next(error);
     });
 
@@ -81,14 +98,32 @@ router.post('', (req, res, next) => {
 //     rating: req.body.rating,
 //     poster: req.body.poster,
 //   };
-//   model.create(oMovie)
-//     .then((newMovie) => {
-//       res.status(201).json(newMovie);
+//
+//   model.readTitle(oMovie.title)
+//     .then((aRecs) => {
+//       // if title already exists , error out
+//       if (aRecs.length) {
+//         console.log("--- view::post -- movie exists");
+//         res.status(412).json({ error: { message: "unable to save, movie title already exists" }});
+//         return;
+//       }
+//       model.create(oMovie)
+//         .then((aRecs) => {
+//           res.status(201).json(aRecs[0]);
+//         })
+//         .catch((error) => {
+//           error.THE_CAUSE = error.toString(); // otherwise the actual cause of the error doesn't get reported
+//           console.log("--- view::post added a catch to update, error: ", error);
+//           res.status(500).json(error);
+//           return;
+//         })
 //     })
 //     .catch((error) => {
+//       console.log("--- view::post -- caught error: ", error);
 //       error.status = 400;
 //       next(error);
 //     });
+//
 // });
 
 /* **************************************************
@@ -191,16 +226,13 @@ router.put('/:id', (req, res, next) => {
           error: {
             message: "unable to save, movie was deleted / id can't be found"
           }
-        }); // this will jump directly to the client axios catch
+        }); // this will jump directly to the browser js axios .catch()
         return;
       }
     })
     .catch((error) => {
-      // error.THE_CAUSE = error.toString(); // otherwise knex/db error message is lost for some reason
       error.status = error.status || 500;
       console.log("--- view::put catch, error: ", error);
-      // res.status(500).json(error);
-      // return;
       next(error);
     });
 

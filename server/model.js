@@ -24,6 +24,10 @@ function create(movie) {
       console.log("--> model::update returning: ", res);
       return res;
     })
+    .catch((error) => {
+      console.log("%%% knex:update error :", error);
+      throw new Error(error.message); // resets to my call stack rather than axios internals
+    })
 }
 
 /*
@@ -33,7 +37,11 @@ function read(_id) {
   const id = parseInt(_id); // handle int or string param
   return knex('movies')
     .where('id', id)
-    .then(aRecs => aRecs[0]); // unpack single record
+    .then(aRecs => aRecs[0]) // unpack single record
+    .catch((error) => {
+      console.log("%%% knex:update error :", error);
+      throw new Error(error.message); // resets to my call stack rather than axios internals
+    })
 }
 
 /* find by title, returns array or 0 or 1 record */
@@ -44,6 +52,10 @@ function readTitle(sTitle) {
       console.log("--> model::readTitle returning: ", res);
       return res;
     })
+    .catch((error) => {
+      console.log("%%% knex:update error :", error);
+      throw new Error(error.message); // resets to my call stack rather than axios internals
+    })
 }
 
 /*
@@ -51,6 +63,10 @@ function readTitle(sTitle) {
 */
 function readAll() {
   return knex('movies')
+    .catch((error) => {
+      console.log("%%% knex:update error :", error);
+      throw new Error(error.message); // resets to my call stack rather than axios internals
+    })
 }
 
 /*
@@ -72,7 +88,7 @@ function update(movie) {
     })
     .catch((error) => {
       console.log("%%% knex:update error :", error);
-      throw new Error(error.message);
+      throw new Error(error.message); // resets to my call stack rather than axios internals
     })
 }
 
@@ -87,6 +103,10 @@ function destroy(id) {
     .del()
     .where('id', id)
     .returning('*')
+    .catch((error) => {
+      console.log("%%% knex:update error :", error);
+      throw new Error(error.message); // resets to my call stack rather than axios internals
+    })
 }
 
 module.exports = {
