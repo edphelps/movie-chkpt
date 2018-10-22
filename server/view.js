@@ -99,16 +99,27 @@ router.get('', (req, res, next) => {
 
 /* **************************************************
 *  GET /movies/:id
-*  Return the movie
+*  Return the movie or next(error) if the ID isn't found
 http GET localhost:3000/movies/2
 ***************************************************** */
 router.get('/:id', (req, res, next) => {
   model.read(req.params.id)
-    .then((oMovie) => {
+    .then((aRecs) => {
+
+      // check if id not found
+      if (!aRecs.length) {
+        console.log(`--- view::get ${req.params.id} -- not found`);
+        const error = new Error("unable to view, movie not found" );
+        error.status = 404;
+        throw error;
+        return;
+      }
+      const oMovie = aRecs[0];
       res.status(200).json(oMovie);
     })
     .catch((error) => {
-      error.status = 404;
+      error.status = error.status || 500;
+      console.log(`--- view::get ${req.params.id} -- error: `, error);
       next(error);
     });
 });

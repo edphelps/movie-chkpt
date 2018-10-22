@@ -7,6 +7,36 @@ function clearErrorMessage() {
   document.getElementById("error-message").innerText = "";
 }
 
+function handleError(error, sCalledFrom) {
+  console.log(`---------- AJAX error in ${sCalledFrom} ----------`);
+  if (error.response) {
+    // The request was made and the server responded with a status code
+    // that falls out of the range of 2xx
+    console.log("message: ", error.response.data.error.message);
+    console.log("error.response.data", error.response.data);
+    console.log("error.response.status", error.response.status);
+    console.log("error.response.headers", error.response.headers);
+    if (error.response.data.error) {
+      displayErrorMessage(error.response.data.error.message);
+    }
+    else {
+      displayErrorMessage("AJAX error (1)");
+    }
+  } else if (error.request) {
+    // The request was made but no response was received
+    // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+    // http.ClientRequest in node.js
+    console.log("error.request", error.request);
+    displayErrorMessage("AJAX error (2)");
+  } else {
+    // Something happened in setting up the request that triggered an Error
+    console.log('error.message: ', error.message);
+    displayErrorMessage(error.message);
+  }
+  console.log("error.config", error.config);
+  console.log("^^^^^^^^^^ AJAX error ^^^^^^^^^^^^^^^^^^^^");
+}
+
 
 // ==========================================================
 // Fill in movie form fields,
@@ -87,32 +117,7 @@ function onSubmitMovie() {
             }
           })
           .catch((error) => {
-            console.log("---------- AJAX error on edit ----------");
-            if (error.response) {
-              // The request was made and the server responded with a status code
-              // that falls out of the range of 2xx
-              console.log("error.response.data", error.response.data);
-              console.log("error.response.status", error.response.status);
-              console.log("error.response.headers", error.response.headers);
-              if (error.response.data.error) {
-                displayErrorMessage(error.response.data.error.message);
-              }
-              else {
-                displayErrorMessage("AJAX error in edit (1)");
-              }
-            } else if (error.request) {
-              // The request was made but no response was received
-              // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-              // http.ClientRequest in node.js
-              console.log("error.request", error.request);
-              displayErrorMessage("AJAX error in edit (2)");
-            } else {
-              // Something happened in setting up the request that triggered an Error
-              console.log('error.message: ', error.message);
-              displayErrorMessage(error.message);
-            }
-            console.log("error.config", error.config);
-            console.log("^^^^^^^^^^ AJAX error on edit ^^^^^^^^^^");
+            handleError(error, "onSubmiMovie-edit")
           });
         break;
 
@@ -131,32 +136,7 @@ function onSubmitMovie() {
             }
           })
           .catch(function (error) {
-            console.log("---------- AJAX error on create ----------");
-            if (error.response) {
-              // The request was made and the server responded with a status code
-              // that falls out of the range of 2xx
-              console.log("error.response.data", error.response.data);
-              console.log("error.response.status", error.response.status);
-              console.log("error.response.headers", error.response.headers);
-              if (error.response.data.error) {
-                displayErrorMessage(error.response.data.error.message);
-              }
-              else {
-                displayErrorMessage("AJAX error in create");
-              }
-            } else if (error.request) {
-              // The request was made but no response was received
-              // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-              // http.ClientRequest in node.js
-              console.log("error.request", error.request);
-              displayErrorMessage("AJAX error in create");
-            } else {
-              // Something happened in setting up the request that triggered an Error
-              console.log('error.message: ', error.message);
-              displayErrorMessage(error.message);
-            }
-            console.log("error.config", error.config);
-            console.log("^^^^^^^^^^ AJAX error on create ^^^^^^^^^^");
+            handleError(error, 'onSubmitMovie-create')
           });
         break;
 
@@ -193,9 +173,11 @@ function onclickDelete(movieId) {
 // setup form to view a movie
 function onclickView(movieId) {
   clearErrorMessage();
+
   axios.get(URL + movieId)
     .then((res) => {
-      const oMovie = res.data;
+      // if the axios.get() fails to find the ID it
+      const oMovie = res.data
 
       // show the div with the movie editing form
       const elemMovieForm = document.getElementById("content--list-movies--edit");
@@ -217,9 +199,7 @@ function onclickView(movieId) {
       frmMovie.submit.focus()
     })
     .catch((error) => {
-      console.log("---------- AJAX error ----------");
-      console.log(error);
-      console.log("^^^^^^^^^^ AJAX error ^^^^^^^^^^");
+      handleError(error,'onClickView')
     });
   return false;
 }

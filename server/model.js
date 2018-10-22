@@ -21,11 +21,11 @@ function create(movie) {
     .insert([movie]) // param is in the format of the fields so use destructuring
     .returning('*') // gets array of the inserted records
     .then((res) => {
-      console.log("--> model::update returning: ", res);
+      console.log("--> model::create returning: ", res);
       return res;
     })
     .catch((error) => {
-      console.log("%%% knex:update error :", error);
+      console.log("%%% knex:create error :", error);
       throw new Error(error.message); // resets to my call stack rather than axios internals
     })
 }
@@ -37,9 +37,8 @@ function read(_id) {
   const id = parseInt(_id); // handle int or string param
   return knex('movies')
     .where('id', id)
-    .then(aRecs => aRecs[0]) // unpack single record
     .catch((error) => {
-      console.log("%%% knex:update error :", error);
+      console.log("%%% knex:read error :", error);
       throw new Error(error.message); // resets to my call stack rather than axios internals
     })
 }
@@ -53,7 +52,7 @@ function readTitle(sTitle) {
       return res;
     })
     .catch((error) => {
-      console.log("%%% knex:update error :", error);
+      console.log("%%% knex:readTitle error :", error);
       throw new Error(error.message); // resets to my call stack rather than axios internals
     })
 }
@@ -64,7 +63,7 @@ function readTitle(sTitle) {
 function readAll() {
   return knex('movies')
     .catch((error) => {
-      console.log("%%% knex:update error :", error);
+      console.log("%%% knex:readAll error :", error);
       throw new Error(error.message); // resets to my call stack rather than axios internals
     })
 }
@@ -104,7 +103,7 @@ function destroy(id) {
     .where('id', id)
     .returning('*')
     .catch((error) => {
-      console.log("%%% knex:update error :", error);
+      console.log("%%% knex:destroy error :", error);
       throw new Error(error.message); // resets to my call stack rather than axios internals
     })
 }
