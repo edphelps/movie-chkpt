@@ -2,11 +2,18 @@
   "name": "movie-chkpt",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon ./server/controller.js"
+    "start": "node ./server/controller.js",
+    "knex": "knex",
+    "heroku-postbuild": "knex migrate:rollback; knex migrate:latest; knex seed:run;",
+    "nodemon": "nodemon ./server/controller.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+
+  "engines": {
+    "node": "v10.9.0"
+  },
+  
   "repository": {
     "type": "git",
     "url": "git+https://github.com/edphelps/movie-chkpt.git"
