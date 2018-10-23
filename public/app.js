@@ -6,7 +6,8 @@
 ********************************************************************************
 ***************************************************************************** */
 
-const URL = "http://localhost:3000/movies/";
+//const URL = "http://localhost:3000/movies/";
+const URL = "movies/";
 
 // convenience references to content sections
 let gelemContentHome = null;
