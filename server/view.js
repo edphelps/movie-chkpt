@@ -105,6 +105,7 @@ router.get('', (req, res, next) => {
 http GET localhost:3000/movies/2
 ***************************************************** */
 router.get('/:id', (req, res, next) => {
+
   model.read(req.params.id)
     .then((aRecs) => {
       // check if id not found
